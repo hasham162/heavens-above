@@ -1,0 +1,15 @@
+name: Dependency Updates
+on:
+  schedule:
+    - cron: "0 6 * * 1"   # Every Monday at 6 AM
+  workflow_dispatch:
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Run npm audit
+        run: npm audit || echo "Audit completed"
+      - name: Check for outdated packages
+        run: npm outdated || echo "Checked for updates"
