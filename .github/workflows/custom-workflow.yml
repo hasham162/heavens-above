@@ -1,0 +1,25 @@
+name: Custom Workflow - Release Notes Generator
+on:
+  push:
+    branches: [ "main" ]
+jobs:
+  release_notes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Generate release notes file
+        run: |
+          echo "### Automated Release Notes" > release_notes.txt
+          echo "Generated on: $(date)" >> release_notes.txt
+          echo "Latest commit:" >> release_notes.txt
+          git log -1 --pretty=format:"%h - %s (%an)" >> release_notes.txt
+          echo "" >> release_notes.txt
+          echo "Release notes generated automatically by GitHub Actions." >> release_notes.txt
+
+      - name: Upload release notes artefact
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-notes
+          path: release_notes.txt
