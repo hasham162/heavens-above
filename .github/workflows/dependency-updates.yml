@@ -4,12 +4,22 @@ on:
     - cron: "0 6 * * 1"   # Every Monday at 6 AM
   workflow_dispatch:
 jobs:
-  check:
+  audit:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: npm install
+
       - name: Run npm audit
-        run: npm audit || echo "Audit completed"
-      - name: Check for outdated packages
-        run: npm outdated || echo "Checked for updates"
+        run: |
+          npm audit --json > audit-report.json
+          echo "Audit completed on $(date)" >> audit-report.json
+
+      - name: Upload audit report
+        uses: actions/upload-artifact@v4
+        with:
+          name: audit-report
+          path: audit-report.json
